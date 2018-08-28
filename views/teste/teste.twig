@@ -1,0 +1,18 @@
+{% extends 'layout.twig' %}
+
+{% set title = 'Página de teste' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+<h1>{{ title }}</h1>
+
+<p>Olá {{ usuario }} sua id é {{ id }}! <br>
+Lista de nomes adquirida de banco de dados: </p>
+<ul>
+{% for linguagem in linguagens %}
+    <li>{{ linguagem.NOME_CLIENTE }}</li>
+{% endfor %}
+</ul>
+{% endblock %}
