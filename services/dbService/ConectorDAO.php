@@ -1,17 +1,29 @@
 <?php 
 namespace dbService;
 use \PDO;
+use \Slim\Container;
+
 class ConectorDAO
 {
-	private $con;
-	function __construct($dsn, $database_user, $db_password)
+	private $c;
+	function __construct(Container $c)
 	{
-		$this->con = new PDO($dsn, $database_user, $db_password);
-		$this->con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+		$this->c = $c;		
 	}
 	public function getConn()
 	{
-		return $this->con;
+		global $conn;
+		if ($conn == null) 
+		{
+			try{
+				$conn = new PDO($this->c['DSN'], $this->c['DATABASE_USER'], $this->c['DB_PASSWORD']);
+				$conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			} catch (\Exception $e)
+			{
+				throw new DbConnException();
+			}
+		}
+		return $conn;
 	}
 }
 ?>

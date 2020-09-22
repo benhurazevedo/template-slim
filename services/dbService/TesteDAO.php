@@ -1,16 +1,17 @@
 <?php
 namespace dbService;
 use \PDO;
+use \Slim\Container;
 class TesteDAO
 {
     private $connector;
-    function __construct($conn=null)
+    function __construct(Container $c=null)
     {
         if($conn==null)
         {
             exit("conector is empty");
         }
-        $this->connector = $conn;
+        $this->connector = $c['ConectorDAO'];
     }
     public function list()
     {
@@ -20,7 +21,12 @@ class TesteDAO
             FROM [dbo].[TB_CLIENTES]
         ";
         $stmt = $this->connector->prepare($sql);
-        $stmt->execute();
+        try {
+            $stmt->execute();
+        } catch (\Exception $e) {
+            throw new SqlCommandException($e);
+        }
+        
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
         
     }
@@ -82,7 +88,12 @@ class TesteDAO
             $param = $documento."%";
             $stmt->bindParam(":documento", $param,PDO::PARAM_STR);
         }
-        $stmt->execute();
+        try {
+            $stmt->execute();
+        } catch (\Exception $e) {
+            throw new SqlCommandException($e);
+        }
+        
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
 //         foreach ($stmt->fetch(PDO::FETCH_ASSOC) as $row)
 //         {

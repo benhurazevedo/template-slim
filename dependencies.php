@@ -1,21 +1,31 @@
 <?php
+use Slim\Views\Twig;
+use Slim\Views\TwigExtension;
+use Slim\Views\Twig_Extension_Debug;
+use dbService;
 // DIC configuration
 $container = $app->getContainer();
 
 // View
-$container['view'] = function ($c) {
-    $view = new \Slim\Views\Twig("views", array('cache' => 'cache/twig', 'debug' => true));
+$container['view'] = function ($c) 
+{
+    $view = new Twig("views", array('cache' => 'cache/twig', 'debug' => true));
     // Add extensions
-    $view->addExtension(new Slim\Views\TwigExtension($c['router'], $c['request']->getUri()));
+    $view->addExtension(new TwigExtension($c['router'], $c['request']->getUri()));
     $view->addExtension(new Twig_Extension_Debug());
-    #$view->addExtension(new Bookshelf\TwigExtension($c['flash']));
+
     return $view;
 };
 
+$container['dbConnService'] = function ($c)
+{
+    return new ConectorDAO ($c);
+};
+
 // db service
-$container['dbTesteService'] = function ($c) {  
-	$dbServiceConn = new dbService\ConectorDAO($c['settings']['DSN'], $c['settings']['DATABASE_USER'], $c['settings']['DB_PASSWORD']);
-    $dbTesteService = new dbService\TesteDAO($dbServiceConn->getConn());
+$container['TesteDAO'] = function ($c) 
+{  
+    $dbTesteService = new TesteDAO($c);
     
     return $dbTesteService;
 };
